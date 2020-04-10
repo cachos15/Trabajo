@@ -28,9 +28,12 @@ public class Login extends AppCompatActivity {
 
     Button btn_registro, btn_login;
     EditText ed_txt_usuario, ed_txt_contraseña;
-    ProgressBar pg_pregreso;
 
     static String usuario, contraseña, identificacionDispositivo;
+
+    ProgressBar pg_login;
+
+    private boolean ejecutar_hilo=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +46,11 @@ public class Login extends AppCompatActivity {
         ed_txt_usuario      =(EditText)findViewById(R.id.log_user);
         ed_txt_contraseña   =(EditText)findViewById(R.id.log_password);
 
-        pg_pregreso         =(ProgressBar)findViewById(R.id.log_progreso);
+        pg_login            =(ProgressBar)findViewById(R.id.log_progreso);
 
-        identificacionDispositivo   = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        identificacionDispositivo   = Settings.Secure.getString(getApplicationContext()
+                .getContentResolver(), Settings.Secure.ANDROID_ID);
 
 
         if (ContextCompat.checkSelfPermission(this,
@@ -56,22 +61,11 @@ public class Login extends AppCompatActivity {
                         100);
         }
 
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "Ya se esta detectando dispositivos", Toast.LENGTH_LONG ).show();
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    100);
-        }
-
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 usuario     = ed_txt_usuario.getText().toString();
                 contraseña  = ed_txt_contraseña.getText().toString();
-
-                pg_pregreso.setVisibility(View.VISIBLE);
 
                 if (usuario.equals(""))
                 {
@@ -83,6 +77,59 @@ public class Login extends AppCompatActivity {
                 }
                 else
                 {
+                    Hilo_login hilo_login = new Hilo_login();
+                    hilo_login.start();
+                }
+            }
+        });
+
+
+        btn_registro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Login.this, Registro.class);
+                startActivity(i);
+            }
+        });
+    }
+
+    private class Hilo_login_ProgressBar extends Thread
+    {
+        @Override
+        public void run() {
+            super.run();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(ejecutar_hilo)
+                    {
+                        pg_login.setVisibility(View.VISIBLE);
+                        btn_login.setEnabled(false);
+                        btn_registro.setEnabled(false);
+                    }
+                    else
+                    {
+                        pg_login.setVisibility(View.INVISIBLE);
+                        btn_login.setEnabled(true);
+                        btn_registro.setEnabled(true);
+                    }
+                }
+            });
+        }
+    }
+
+    private class Hilo_login extends Thread
+    {
+        @Override
+        public void run() {
+            super.run();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Hilo_login_ProgressBar hilo_progressBar = new Hilo_login_ProgressBar();
+                    hilo_progressBar.start();
+                    ejecutar_hilo=true;
+
                     Response.Listener<String> respuesta = new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -91,48 +138,38 @@ public class Login extends AppCompatActivity {
                                 String respuestaRegistro = json_respuesta.getString("login");
                                 Boolean respuestaDispositivo = json_respuesta.getBoolean("identificacionDispositivo");
 
-
-                                if (respuestaRegistro.equals("login"))
+                                switch (respuestaRegistro)
                                 {
-                                    if(respuestaDispositivo)
-                                    {
+                                    case "login":
+                                        ejecutar_hilo=false;
                                         Intent i = new Intent(Login.this, MenuPrincipal.class);
-                                        i.putExtra("Registrado",true);
-                                        i.putExtra("Usuario",usuario);
                                         startActivity(i);
                                         Login.this.finish();
-                                    }
-                                    else
-                                    {
-                                        Intent i = new Intent(Login.this,MenuPrincipal.class);
-                                        i.putExtra("Registrado",false);
-                                        i.putExtra("Usuario",usuario);
-                                        startActivity(i);
-                                        Login.this.finish();
-                                    }
-                                }
-                                else if(respuestaRegistro.equals("noValido"))
-                                {
-                                    Toast.makeText(getBaseContext(), "Dispositivo ya registrado con otro usuario", Toast.LENGTH_LONG).show();
-                                }
-                                else if(respuestaRegistro.equals("usuario"))
-                                {
-                                    Toast.makeText(getBaseContext(), "Usuario no existe", Toast.LENGTH_LONG).show();
-                                    ed_txt_usuario.setText("");
-                                    ed_txt_contraseña.setText("");
+                                        break;
 
-                                }
-                                else if (respuestaRegistro.equals("contraseña"))
-                                {
-                                    Toast.makeText(getBaseContext(), "Contraseña erronea", Toast.LENGTH_LONG).show();
-                                    ed_txt_contraseña.setText("");
-                                }
-                                else
-                                {
-                                    Toast.makeText(getBaseContext(), "Fallo al ingresar", Toast.LENGTH_LONG).show();
-                                }
+                                    case "noValido":
+                                        ejecutar_hilo=false;
+                                        Toast.makeText(getBaseContext(), "Dispositivo ya registrado con otro usuario"
+                                                , Toast.LENGTH_LONG).show();
+                                        break;
 
+                                    case "usuario":
+                                        ejecutar_hilo=false;
+                                        Toast.makeText(getBaseContext(), "Usuario no existe", Toast.LENGTH_LONG).show();
+                                        ed_txt_usuario.setText("");
+                                        ed_txt_contraseña.setText("");
+                                        break;
 
+                                    case "contraseña":
+                                        ejecutar_hilo=false;
+                                        Toast.makeText(getBaseContext(), "Contraseña erronea", Toast.LENGTH_LONG).show();
+                                        ed_txt_contraseña.setText("");
+                                        break;
+
+                                    default:
+                                        ejecutar_hilo=false;
+                                        Toast.makeText(getBaseContext(), "Fallo al ingresar", Toast.LENGTH_LONG).show();
+                                }
                             }
                             catch (JSONException e){
                                 e.getMessage();
@@ -145,18 +182,8 @@ public class Login extends AppCompatActivity {
                     RequestQueue cola = Volley.newRequestQueue(Login.this);
                     cola.add(login);
                 }
-                pg_pregreso.setVisibility(View.INVISIBLE);
-            }
-        });
-
-
-        btn_registro.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(Login.this, Registro.class);
-                startActivity(i);
-            }
-        });
+            });
+        }
     }
 
     public String Datos()
