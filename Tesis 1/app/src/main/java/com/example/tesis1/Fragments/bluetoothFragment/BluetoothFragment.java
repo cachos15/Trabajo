@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.tesis1.Activities.Login;
 import com.example.tesis1.Bluetooth.ConexionBluetooth;
+import com.example.tesis1.Estilos_listas.EstiloLista1;
 import com.example.tesis1.R;
 
 import java.io.IOException;
@@ -182,8 +183,10 @@ public class BluetoothFragment extends Fragment {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     listaBluetooth.add(device.getName());
                     listaBluetooth_mac.add(device.getAddress());
-                    arrayAdapterBluetooth = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, listaBluetooth);
-                    l_vw_bluetooth.setAdapter(arrayAdapterBluetooth);
+//                    arrayAdapterBluetooth = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, listaBluetooth);
+//                    l_vw_bluetooth.setAdapter(arrayAdapterBluetooth);
+                    EstiloLista1 estilo = new EstiloLista1(getActivity(),R.layout.estilo_lista_bluetooth,listaBluetooth);
+                    l_vw_bluetooth.setAdapter(estilo);
                     break;
 
                 case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
@@ -223,9 +226,12 @@ public class BluetoothFragment extends Fragment {
                 listaBluetooth.add(device.getName());
                 listaBluetooth_mac.add(device.getAddress());
             }
-            arrayAdapterBluetooth = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,
-                    listaBluetooth);
-            l_vw_bluetooth.setAdapter(arrayAdapterBluetooth);
+//            arrayAdapterBluetooth = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,
+//                    listaBluetooth);
+//            l_vw_bluetooth.setAdapter(arrayAdapterBluetooth);
+
+            EstiloLista1 estilo = new EstiloLista1(getActivity(),R.layout.estilo_lista_bluetooth,listaBluetooth);
+            l_vw_bluetooth.setAdapter(estilo);
         }
     }
 

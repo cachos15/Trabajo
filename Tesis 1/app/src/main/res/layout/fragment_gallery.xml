@@ -7,10 +7,21 @@
     android:orientation="vertical"
     tools:ignore="MissingDefaultResource">
 
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:id="@+id/prueba_progreso"
+        android:layout_marginTop="5dp"
+        android:visibility="invisible"
+        android:indeterminateTint="@android:color/holo_orange_dark"
+        android:indeterminate="true"/>
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:id="@+id/lista"/>
 
 </LinearLayout>

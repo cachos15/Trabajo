@@ -126,7 +126,7 @@ public class Login extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Hilo_login_ProgressBar hilo_progressBar = new Hilo_login_ProgressBar();
+                    final Hilo_login_ProgressBar hilo_progressBar = new Hilo_login_ProgressBar();
                     hilo_progressBar.start();
                     ejecutar_hilo=true;
 
@@ -141,35 +141,32 @@ public class Login extends AppCompatActivity {
                                 switch (respuestaRegistro)
                                 {
                                     case "login":
-                                        ejecutar_hilo=false;
                                         Intent i = new Intent(Login.this, MenuPrincipal.class);
                                         startActivity(i);
                                         Login.this.finish();
                                         break;
 
                                     case "noValido":
-                                        ejecutar_hilo=false;
                                         Toast.makeText(getBaseContext(), "Dispositivo ya registrado con otro usuario"
                                                 , Toast.LENGTH_LONG).show();
                                         break;
 
                                     case "usuario":
-                                        ejecutar_hilo=false;
                                         Toast.makeText(getBaseContext(), "Usuario no existe", Toast.LENGTH_LONG).show();
                                         ed_txt_usuario.setText("");
                                         ed_txt_contraseña.setText("");
                                         break;
 
                                     case "contraseña":
-                                        ejecutar_hilo=false;
                                         Toast.makeText(getBaseContext(), "Contraseña erronea", Toast.LENGTH_LONG).show();
                                         ed_txt_contraseña.setText("");
                                         break;
 
                                     default:
-                                        ejecutar_hilo=false;
                                         Toast.makeText(getBaseContext(), "Fallo al ingresar", Toast.LENGTH_LONG).show();
                                 }
+                                ejecutar_hilo=false;
+                                hilo_progressBar.run();
                             }
                             catch (JSONException e){
                                 e.getMessage();
