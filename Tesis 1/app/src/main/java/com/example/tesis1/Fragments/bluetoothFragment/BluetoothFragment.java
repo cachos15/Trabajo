@@ -32,7 +32,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import static android.app.Activity.RESULT_CANCELED;
-import static java.lang.Thread.sleep;
 
 public class BluetoothFragment extends Fragment {
 
@@ -42,7 +41,6 @@ public class BluetoothFragment extends Fragment {
 
     private ArrayList<String> listaBluetooth = new ArrayList<String>();
     private ArrayList<String> listaBluetooth_mac = new ArrayList<String>();
-    private ArrayAdapter<String> arrayAdapterBluetooth;
 
     Button btn_buscarDispositivos, btn_dispositivosEmparejados;
     ListView l_vw_bluetooth;
@@ -183,8 +181,6 @@ public class BluetoothFragment extends Fragment {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     listaBluetooth.add(device.getName());
                     listaBluetooth_mac.add(device.getAddress());
-//                    arrayAdapterBluetooth = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, listaBluetooth);
-//                    l_vw_bluetooth.setAdapter(arrayAdapterBluetooth);
                     EstiloLista1 estilo = new EstiloLista1(getActivity(),listaBluetooth);
                     l_vw_bluetooth.setAdapter(estilo);
                     break;
@@ -212,8 +208,6 @@ public class BluetoothFragment extends Fragment {
     {
         listaBluetooth.clear();
         listaBluetooth_mac.clear();
-        arrayAdapterBluetooth = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, listaBluetooth);
-        l_vw_bluetooth.setAdapter(arrayAdapterBluetooth);
     }
 
     public void DispositivosEmparejados()
@@ -226,9 +220,6 @@ public class BluetoothFragment extends Fragment {
                 listaBluetooth.add(device.getName());
                 listaBluetooth_mac.add(device.getAddress());
             }
-//            arrayAdapterBluetooth = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,
-//                    listaBluetooth);
-//            l_vw_bluetooth.setAdapter(arrayAdapterBluetooth);
 
             EstiloLista1 estilo = new EstiloLista1(getActivity(),listaBluetooth);
             l_vw_bluetooth.setAdapter(estilo);

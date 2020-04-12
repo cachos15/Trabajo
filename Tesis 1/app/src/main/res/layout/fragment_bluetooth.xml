@@ -26,11 +26,11 @@
             tools:ignore="MissingConstraints"
             android:id="@+id/bluetooth_dispositivos"/>
 
-            <ListView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:id="@+id/bluetooth_lista"/>
+    <ListView
+        android:id="@+id/bluetooth_lista"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp" />
 
 
 </LinearLayout>
