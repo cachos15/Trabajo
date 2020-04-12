@@ -26,12 +26,11 @@ import org.json.JSONObject;
 
 public class Login extends AppCompatActivity {
 
-    Button btn_registro, btn_login;
-    EditText ed_txt_usuario, ed_txt_contraseña;
+    private Button btn_registro, btn_login;
+    private EditText ed_txt_usuario, ed_txt_contraseña;
+    private ProgressBar pg_login;
 
     static String usuario, contraseña, identificacionDispositivo;
-
-    ProgressBar pg_login;
 
     private boolean ejecutar_hilo=true;
 
@@ -40,26 +39,12 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        btn_registro        =(Button)findViewById(R.id.log_register);
-        btn_login           =(Button)findViewById(R.id.log_login);
+        UnidadGrafica();
 
-        ed_txt_usuario      =(EditText)findViewById(R.id.log_user);
-        ed_txt_contraseña   =(EditText)findViewById(R.id.log_password);
-
-        pg_login            =(ProgressBar)findViewById(R.id.log_progreso);
-
+        SolicitudPermisos();
 
         identificacionDispositivo   = Settings.Secure.getString(getApplicationContext()
                 .getContentResolver(), Settings.Secure.ANDROID_ID);
-
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                    100);
-        }
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,22 +52,9 @@ public class Login extends AppCompatActivity {
                 usuario     = ed_txt_usuario.getText().toString();
                 contraseña  = ed_txt_contraseña.getText().toString();
 
-                if (usuario.equals(""))
-                {
-                    Toast.makeText(getBaseContext(), "Usuario obligatorio", Toast.LENGTH_LONG).show();
-                }
-                else if(contraseña.equals(""))
-                {
-                    Toast.makeText(getBaseContext(), "Contraseña obligatoria", Toast.LENGTH_LONG).show();
-                }
-                else
-                {
-                    Hilo_login hilo_login = new Hilo_login();
-                    hilo_login.start();
-                }
+                Ingreso();
             }
         });
-
 
         btn_registro.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,6 +63,69 @@ public class Login extends AppCompatActivity {
                 startActivity(i);
             }
         });
+    }
+
+    private void UnidadGrafica()
+    {
+        btn_registro        =(Button)findViewById(R.id.log_register);
+        btn_login           =(Button)findViewById(R.id.log_login);
+
+        ed_txt_usuario      =(EditText)findViewById(R.id.log_user);
+        ed_txt_contraseña   =(EditText)findViewById(R.id.log_password);
+
+        pg_login            =(ProgressBar)findViewById(R.id.log_progreso);
+    }
+
+    private void SolicitudPermisos()
+    {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    100);
+        }
+    }
+
+    private boolean VerificacionUsuario()
+    {
+        if (usuario.equals(""))
+        {
+            Toast.makeText(getBaseContext(), "Usuario obligatorio", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    private boolean VerificacionContraseña()
+    {
+        if(contraseña.equals(""))
+        {
+            Toast.makeText(getBaseContext(), "Contraseña obligatoria", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    private void Ingreso()
+    {
+        if(!VerificacionUsuario() && !VerificacionContraseña())
+        {
+            Hilo_login hilo_login = new Hilo_login();
+            hilo_login.start();
+        }
+    }
+
+    public String Datos()
+    {
+        String DatosPermiso = identificacionDispositivo+","+usuario+"?";
+        return DatosPermiso;
     }
 
     private class Hilo_login_ProgressBar extends Thread
@@ -183,9 +218,5 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    public String Datos()
-    {
-        String DatosPermiso = identificacionDispositivo+","+usuario+"?";
-        return DatosPermiso;
-    }
+
 }
