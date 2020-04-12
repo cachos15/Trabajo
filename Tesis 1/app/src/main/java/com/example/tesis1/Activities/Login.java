@@ -57,8 +57,8 @@ public class Login extends AppCompatActivity {
                 Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        100);
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    100);
         }
 
         btn_login.setOnClickListener(new View.OnClickListener() {

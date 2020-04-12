@@ -185,7 +185,7 @@ public class BluetoothFragment extends Fragment {
                     listaBluetooth_mac.add(device.getAddress());
 //                    arrayAdapterBluetooth = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, listaBluetooth);
 //                    l_vw_bluetooth.setAdapter(arrayAdapterBluetooth);
-                    EstiloLista1 estilo = new EstiloLista1(getActivity(),R.layout.estilo_lista_bluetooth,listaBluetooth);
+                    EstiloLista1 estilo = new EstiloLista1(getActivity(),listaBluetooth);
                     l_vw_bluetooth.setAdapter(estilo);
                     break;
 
@@ -230,7 +230,7 @@ public class BluetoothFragment extends Fragment {
 //                    listaBluetooth);
 //            l_vw_bluetooth.setAdapter(arrayAdapterBluetooth);
 
-            EstiloLista1 estilo = new EstiloLista1(getActivity(),R.layout.estilo_lista_bluetooth,listaBluetooth);
+            EstiloLista1 estilo = new EstiloLista1(getActivity(),listaBluetooth);
             l_vw_bluetooth.setAdapter(estilo);
         }
     }

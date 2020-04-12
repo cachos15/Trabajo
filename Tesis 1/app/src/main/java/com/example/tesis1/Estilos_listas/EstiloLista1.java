@@ -13,13 +13,11 @@ import java.util.ArrayList;
 
 public class EstiloLista1 extends BaseAdapter {
     private Context context;
-    private int layaout;
-    private ArrayList<String> lista = new ArrayList<String>();
+    private ArrayList<String> lista;
 
-    public EstiloLista1(Context context, int layaout, ArrayList<String> lista)
+    public EstiloLista1(Context context,  ArrayList<String> lista)
     {
         this.context    = context;
-        this.layaout    = layaout;
         this.lista      = lista;
     }
 
