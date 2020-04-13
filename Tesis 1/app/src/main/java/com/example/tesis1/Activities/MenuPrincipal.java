@@ -1,13 +1,16 @@
 package com.example.tesis1.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.tesis1.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -62,5 +65,25 @@ public class MenuPrincipal extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.menu_logout:
+                cerrarSesion();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void cerrarSesion()
+    {
+        Intent i = new Intent(MenuPrincipal.this, Login.class);
+        startActivity(i);
+        MenuPrincipal.this.finish();
     }
 }

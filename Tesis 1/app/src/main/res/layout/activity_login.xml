@@ -19,7 +19,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="32dp"
                 android:layout_marginRight="32dp"
-                android:layout_marginTop="160dp"
+                android:layout_marginTop="130dp"
                 android:id="@+id/log_user"
                 android:singleLine="true"
                 android:hint="Usuario"/>
@@ -36,11 +36,30 @@
                 android:hint="Contraseña"
                 />
 
+            <Switch
+                android:id="@+id/log_verContraseña"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginRight="32dp"
+                android:text="Ver contraseña        " />
+
+
+            <Switch
+                android:id="@+id/log_recordarme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginRight="32dp"
+                android:text="Recordarme            " />
+
             <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="10dp"
                 android:id="@+id/log_progreso"
                 android:visibility="invisible"
                 android:indeterminateTint="@android:color/holo_orange_dark"/>
@@ -67,6 +86,8 @@
                 android:text="Registrarse"
                 android:background="@drawable/button_rounded_border"
                 />
+
+
 
         </LinearLayout>
 

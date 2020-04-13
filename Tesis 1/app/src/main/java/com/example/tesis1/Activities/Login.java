@@ -9,10 +9,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -29,6 +33,7 @@ public class Login extends AppCompatActivity {
     private Button btn_registro, btn_login;
     private EditText ed_txt_usuario, ed_txt_contraseña;
     private ProgressBar pg_login;
+    private Switch s_verContraseña;
 
     static String usuario, contraseña, identificacionDispositivo;
 
@@ -39,9 +44,9 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        UnidadGrafica();
+        unidadGrafica();
 
-        SolicitudPermisos();
+        solicitudPermisos();
 
         identificacionDispositivo   = Settings.Secure.getString(getApplicationContext()
                 .getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -52,7 +57,7 @@ public class Login extends AppCompatActivity {
                 usuario     = ed_txt_usuario.getText().toString();
                 contraseña  = ed_txt_contraseña.getText().toString();
 
-                Ingreso();
+                ingreso();
             }
         });
 
@@ -63,9 +68,17 @@ public class Login extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        s_verContraseña.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                verContraseña();
+            }
+        });
+
     }
 
-    private void UnidadGrafica()
+    private void unidadGrafica()
     {
         btn_registro        =(Button)findViewById(R.id.log_register);
         btn_login           =(Button)findViewById(R.id.log_login);
@@ -74,9 +87,12 @@ public class Login extends AppCompatActivity {
         ed_txt_contraseña   =(EditText)findViewById(R.id.log_password);
 
         pg_login            =(ProgressBar)findViewById(R.id.log_progreso);
+
+        s_verContraseña     =(Switch)findViewById(R.id.log_verContraseña);
+
     }
 
-    private void SolicitudPermisos()
+    private void solicitudPermisos()
     {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -87,7 +103,7 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    private boolean VerificacionUsuario()
+    private boolean verificacionUsuario()
     {
         if (usuario.equals(""))
         {
@@ -100,7 +116,7 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    private boolean VerificacionContraseña()
+    private boolean verificacionContraseña()
     {
         if(contraseña.equals(""))
         {
@@ -113,16 +129,28 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    private void Ingreso()
+    private void ingreso()
     {
-        if(!VerificacionUsuario() && !VerificacionContraseña())
+        if(verificacionUsuario() && verificacionContraseña())
         {
             Hilo_login hilo_login = new Hilo_login();
             hilo_login.start();
         }
     }
 
-    public String Datos()
+    private void verContraseña()
+    {
+        if(s_verContraseña.isChecked())
+        {
+            ed_txt_contraseña.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+        }
+        else
+        {
+            ed_txt_contraseña.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        }
+    }
+
+    public String datos()
     {
         String DatosPermiso = identificacionDispositivo+","+usuario+"?";
         return DatosPermiso;
