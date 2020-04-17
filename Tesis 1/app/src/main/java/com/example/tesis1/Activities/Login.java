@@ -25,7 +25,7 @@ import com.example.tesis1.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
+//se realiza herencia de la clase AppCompatActivity para correr el código mejor
 public class Login extends AppCompatActivity {
 
     private Button btn_registro, btn_login;
@@ -35,14 +35,14 @@ public class Login extends AppCompatActivity {
     static String usuario, contraseña, identificacionDispositivo;
     private boolean ejecutar_hilo=true, verContraseña=true;
 
-    @Override
+    @Override //sobreescribir metodo onCreate de AppComparActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_login); //Llamar el layout
 
-        unidadGrafica();
+        unidadGrafica(); //Metodo para implementar findview
 
-        solicitudPermisos();
+        solicitudPermisos(); //metodo para solicitar al dispositivo permisos
 
         identificacionDispositivo   = Settings.Secure.getString(getApplicationContext()
                 .getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -206,16 +206,19 @@ public class Login extends AppCompatActivity {
                             try{
                                 JSONObject json_respuesta = new JSONObject(response);
                                 String respuestaRegistro = json_respuesta.getString("login");
-                                Boolean respuestaDispositivo = json_respuesta.getBoolean("identificacionDispositivo");
-
+                                Boolean respuestaDispositivo;
+                                if (respuestaRegistro.equals("login")) {
+                                    respuestaDispositivo = json_respuesta.getBoolean("identificacionDispositivo");
+                                }
+                                else {
+                                    respuestaDispositivo = false;
+                                }
                                 switch (respuestaRegistro)
                                 {
-                                    case "login":
-                                        Intent i = new Intent(Login.this, MenuPrincipal.class);
-                                        startActivity(i);
-                                        Login.this.finish();
+                                    case "contraseña":
+                                        Toast.makeText(getBaseContext(), "Contraseña erronea", Toast.LENGTH_LONG).show();
+                                        ed_txt_contraseña.setText("");
                                         break;
-
                                     case "noValido":
                                         Toast.makeText(getBaseContext(), "Dispositivo ya registrado con otro usuario"
                                                 , Toast.LENGTH_LONG).show();
@@ -226,10 +229,10 @@ public class Login extends AppCompatActivity {
                                         ed_txt_usuario.setText("");
                                         ed_txt_contraseña.setText("");
                                         break;
-
-                                    case "contraseña":
-                                        Toast.makeText(getBaseContext(), "Contraseña erronea", Toast.LENGTH_LONG).show();
-                                        ed_txt_contraseña.setText("");
+                                    case "login":
+                                        Intent i = new Intent(Login.this, MenuPrincipal.class);
+                                        startActivity(i);
+                                        Login.this.finish();
                                         break;
 
                                     default:

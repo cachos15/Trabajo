@@ -23,6 +23,7 @@
         <activity android:name=".Activities.Registro" />
         <activity android:name=".Activities.Login">
             <intent-filter>
+                <!--Mostrar LOGIN al abrir la APP-->
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
