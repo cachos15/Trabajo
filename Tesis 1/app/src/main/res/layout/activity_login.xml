@@ -1,96 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical">
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ScrollView
+    <EditText
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="130dp"
+        android:id="@+id/log_user"
+        android:singleLine="true"
+        android:hint="Usuario"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/log_user"
+        android:inputType="textPassword"
+        android:id="@+id/log_password"
+        android:singleLine="true"
+        android:hint="Contraseña"
+        />
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
-                android:layout_marginTop="130dp"
-                android:id="@+id/log_user"
-                android:singleLine="true"
-                android:hint="Usuario"/>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/log_password"
+        android:layout_marginLeft="-60dp"
+        android:layout_marginTop="19dp"
+        android:layout_below="@+id/log_user"
+        android:id="@+id/log_verPass"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_visibility"/>
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
-                android:layout_marginTop="10dp"
-                android:inputType="textPassword"
-                android:id="@+id/log_password"
-                android:singleLine="true"
-                android:hint="Contraseña"
-                />
+    <Switch
+        android:id="@+id/log_recordarme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginRight="32dp"
+        android:text="Recordarme  "
+        android:layout_below="@+id/log_password"/>
 
-            <Switch
-                android:id="@+id/log_verContraseña"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="32dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginRight="32dp"
-                android:text="Ver contraseña        " />
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_below="@+id/log_recordarme"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/log_progreso"
+        android:visibility="invisible"
+        android:indeterminateTint="@android:color/holo_orange_dark"/>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="20dp"
+        android:id="@+id/log_login"
+        android:text="Ingresar"
+        android:layout_below="@+id/log_progreso"
+        android:background="@drawable/button_rounded"
+        />
 
-            <Switch
-                android:id="@+id/log_recordarme"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="32dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginRight="32dp"
-                android:text="Recordarme            " />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="60dp"
+        android:id="@+id/log_register"
+        android:text="Registrarse"
+        android:layout_below="@+id/log_login"
+        android:background="@drawable/button_rounded_border"
+        />
 
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:id="@+id/log_progreso"
-                android:visibility="invisible"
-                android:indeterminateTint="@android:color/holo_orange_dark"/>
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
-                android:layout_marginTop="10dp"
-                android:id="@+id/log_login"
-                android:text="Ingresar"
-                android:background="@drawable/button_rounded"
-                />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="60dp"
-                android:id="@+id/log_register"
-                android:text="Registrarse"
-                android:background="@drawable/button_rounded_border"
-                />
-
-
-
-        </LinearLayout>
-
-    </ScrollView>
-
-</LinearLayout>
+</RelativeLayout>

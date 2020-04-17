@@ -14,11 +14,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.example.tesis1.Activities.Login;
 import com.example.tesis1.Bluetooth.ConexionBluetooth;
@@ -27,36 +27,33 @@ import com.example.tesis1.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.UUID;
 
 import static android.app.Activity.RESULT_CANCELED;
 
 public class BluetoothFragment extends Fragment {
 
-    private BluetoothFragmentViewModel homeViewModel;
-
     private BluetoothAdapter bth_adapter;
 
     private ArrayList<String> listaBluetooth = new ArrayList<String>();
     private ArrayList<String> listaBluetooth_mac = new ArrayList<String>();
 
-    Button btn_buscarDispositivos, btn_dispositivosEmparejados;
-    ListView l_vw_bluetooth;
+    private Button btn_buscarDispositivos;
+    private ListView l_vw_bluetooth;
+    private ProgressBar pg_progreso;
+
+    private boolean ejecutar_hilo=true, buscandoDispositivos;
 
     private Login DatosLogin = new Login();
-
     String DatosUsuario = DatosLogin.datos();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                ViewModelProviders.of(this).get(BluetoothFragmentViewModel.class);
         View root = inflater.inflate(R.layout.fragment_bluetooth, container, false);
 
-        btn_buscarDispositivos      =root.findViewById(R.id.bluetooth_buscar);
-        btn_dispositivosEmparejados =root.findViewById(R.id.bluetooth_dispositivos);
-        l_vw_bluetooth              =root.findViewById(R.id.bluetooth_lista);
+        btn_buscarDispositivos  =root.findViewById(R.id.bluetooth_buscar);
+        l_vw_bluetooth          =root.findViewById(R.id.bluetooth_lista);
+        pg_progreso             =root.findViewById(R.id.bluetooth_progreso);
 
         bth_adapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -66,97 +63,101 @@ public class BluetoothFragment extends Fragment {
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
         getActivity().registerReceiver(receiver, filter);
 
-        //Solicitar bluetooth
         if (!bth_adapter.isEnabled()){
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, 100);
+            encenderbluetooth();
         }
-        else //Llenar la lista con dispositivos emparejados
+        else
         {
-            DispositivosEmparejados();
+            buscarDispositivos();
         }
 
-        //Buscar Dispositivos
         btn_buscarDispositivos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!bth_adapter.isEnabled()){
-                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableBtIntent, 100);
-                }
-                else
-                {
-                    if(bth_adapter.isDiscovering())
-                    {
-                        Toast.makeText(getActivity(), "Ya se esta detectando dispositivos", Toast.LENGTH_LONG ).show();
-                    }
-                    else
-                    {
-                        bth_adapter.startDiscovery();
-                    }
-                }
-            }
-        });
-
-        //Dispositivos emparejados
-        btn_dispositivosEmparejados.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DispositivosEmparejados();
+                buscarDispositivos();
             }
         });
 
         l_vw_bluetooth.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (!bth_adapter.isDiscovering())
-                {
-                    BluetoothDevice Dispositivo = bth_adapter.getRemoteDevice(listaBluetooth_mac.get(position));
-                    BluetoothSocket bth_Socket  = null;
-
-                    try {
-                        bth_Socket = Dispositivo.createRfcommSocketToServiceRecord(UUID.
-                                fromString("0001101-0000-1000-8000-00805F9B34FB"));
-                    } catch (IOException e) {
-                        Toast.makeText(getActivity(), "error 1", Toast.LENGTH_LONG ).show();
-                    }
-
-                    try {
-                        bth_Socket.connect();
-                    }catch (IOException connectException){
-                        Toast.makeText(getActivity(), "error 2", Toast.LENGTH_LONG ).show();
-                    }
-
-                    if (!bth_Socket.isConnected())
-                    {
-                        try {
-                            bth_Socket.connect();
-                        } catch (IOException connectException) {
-                            Toast.makeText(getActivity(), "error 3", Toast.LENGTH_LONG ).show();
-                        }
-                    }
-                    else
-                    {
-                         ConexionBluetooth conexionBluetooth = new ConexionBluetooth(bth_Socket);
-                         conexionBluetooth.start();
-                         conexionBluetooth.Envio(DatosUsuario);
-                        try {
-                            bth_Socket.close();
-                        } catch (IOException e) {
-                            Toast.makeText(getActivity(), "error 4", Toast.LENGTH_LONG ).show();
-                        }
-                    }
-                }
-                else
-                {
-                    Toast.makeText(getActivity(), "Buscando dispositivos, por favor espere", Toast.LENGTH_LONG ).show();
-                }
+                conectarDispositivo(position);
             }
         });
 
         return root;
     }
 
+    private void conectarDispositivo(int position)
+    {
+        if (!buscandoDispositivos)
+        {
+            BluetoothDevice Dispositivo = bth_adapter.getRemoteDevice(listaBluetooth_mac.get(position));
+            BluetoothSocket bth_Socket  = null;
+
+            try {
+                bth_Socket = Dispositivo.createRfcommSocketToServiceRecord(UUID.
+                        fromString("0001101-0000-1000-8000-00805F9B34FB"));
+            } catch (IOException e) {
+                Toast.makeText(getActivity(), "error 1", Toast.LENGTH_LONG ).show();
+            }
+
+            try {
+                bth_Socket.connect();
+            }catch (IOException connectException){
+                Toast.makeText(getActivity(), "error 2", Toast.LENGTH_LONG ).show();
+            }
+
+            if (!bth_Socket.isConnected())
+            {
+                try {
+                    bth_Socket.connect();
+                } catch (IOException connectException) {
+                    Toast.makeText(getActivity(), "error 3", Toast.LENGTH_LONG ).show();
+                }
+            }
+            else
+            {
+                ConexionBluetooth conexionBluetooth = new ConexionBluetooth(bth_Socket);
+                conexionBluetooth.start();
+                conexionBluetooth.Envio(DatosUsuario);
+                try {
+                    bth_Socket.close();
+                } catch (IOException e) {
+                    Toast.makeText(getActivity(), "error 4", Toast.LENGTH_LONG ).show();
+                }
+            }
+        }
+        else
+        {
+            Toast.makeText(getActivity(), "Buscando dispositivos, por favor espere", Toast.LENGTH_LONG ).show();
+        }
+    }
+
+    private void encenderbluetooth()
+    {
+        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(enableBtIntent, 100);
+    }
+
+    private void buscarDispositivos()
+    {
+        if (!bth_adapter.isEnabled()){
+            encenderbluetooth();
+        }
+        else
+        {
+            if(bth_adapter.isDiscovering())
+            {
+                Toast.makeText(getActivity(), "Ya se esta detectando dispositivos", Toast.LENGTH_LONG ).show();
+            }
+            else
+            {
+                bth_adapter.startDiscovery();
+
+            }
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -167,31 +168,37 @@ public class BluetoothFragment extends Fragment {
             {
                 Toast.makeText(getActivity(), "Por favor encienda el Bluetooth", Toast.LENGTH_LONG ).show();
             }
+            else
+            {
+                buscarDispositivos();
+            }
         }
     }
 
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+            Hilo_progreso hilo_progreso = new Hilo_progreso();
 
-            switch (action)
+            if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action))
             {
-                case BluetoothDevice.ACTION_FOUND:
-                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    listaBluetooth.add(device.getName());
-                    listaBluetooth_mac.add(device.getAddress());
-                    EstiloLista1 estilo = new EstiloLista1(getActivity(),listaBluetooth);
-                    l_vw_bluetooth.setAdapter(estilo);
-                    break;
-
-                case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
-                    Toast.makeText(getActivity(), "Buscando Dispositivos", Toast.LENGTH_LONG ).show();
-                    DispositivosEmparejados();
-                    break;
-
-                case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
-                    Toast.makeText(getActivity(), "Busqueda finalizada", Toast.LENGTH_LONG ).show();
-                    break;
+                limpiarLista();
+                ejecutar_hilo=true;
+                hilo_progreso.start();
+                hilo_progreso.run();
+            }
+            else if (BluetoothDevice.ACTION_FOUND.equals(action))
+            {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                listaBluetooth.add(device.getName());
+                listaBluetooth_mac.add(device.getAddress());
+                EstiloLista1 estilo = new EstiloLista1(getActivity(),listaBluetooth);
+                l_vw_bluetooth.setAdapter(estilo);
+            }
+            else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action))
+            {
+                ejecutar_hilo=false;
+                hilo_progreso.run();
             }
         }
     };
@@ -203,25 +210,32 @@ public class BluetoothFragment extends Fragment {
         super.onDestroy();
     }
 
-    public void LimpiarLista()
+    public void limpiarLista()
     {
         listaBluetooth.clear();
         listaBluetooth_mac.clear();
     }
 
-    public void DispositivosEmparejados()
+    private class Hilo_progreso extends Thread
     {
-        LimpiarLista();
-        Set<BluetoothDevice> pairedDevices = bth_adapter.getBondedDevices();
-        if(pairedDevices.size()>0)
-        {
-            for (BluetoothDevice device : pairedDevices) {
-                listaBluetooth.add(device.getName());
-                listaBluetooth_mac.add(device.getAddress());
-            }
-
-            EstiloLista1 estilo = new EstiloLista1(getActivity(),listaBluetooth);
-            l_vw_bluetooth.setAdapter(estilo);
+        @Override
+        public void run() {
+            super.run();
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (ejecutar_hilo)
+                    {
+                        pg_progreso.setVisibility(View.VISIBLE);
+                        buscandoDispositivos=true;
+                    }
+                    else
+                    {
+                        pg_progreso.setVisibility(View.INVISIBLE);
+                        buscandoDispositivos=false;
+                    }
+                }
+            });
         }
     }
 

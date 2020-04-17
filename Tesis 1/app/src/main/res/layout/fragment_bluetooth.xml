@@ -7,30 +7,33 @@
     android:orientation="vertical"
     tools:ignore="MissingDefaultResource">
 
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:id="@+id/bluetooth_progreso"
+        android:layout_marginTop="5dp"
+        android:visibility="invisible"
+        android:indeterminateTint="@android:color/holo_orange_dark"
+        android:indeterminate="true"/>
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_rounded"
-            android:layout_marginTop="10dp"
-            android:text="Buscar dispositivos"
-            tools:ignore="MissingConstraints"
-            android:id="@+id/bluetooth_buscar"/>
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_rounded_border"
-            android:layout_marginTop="10dp"
-            android:text="Dispositivos emparejados"
-            tools:ignore="MissingConstraints"
-            android:id="@+id/bluetooth_dispositivos"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_rounded"
+        android:layout_marginTop="5dp"
+        android:text="Buscar dispositivos"
+        tools:ignore="MissingConstraints"
+        android:id="@+id/bluetooth_buscar"/>
+
 
     <ListView
         android:id="@+id/bluetooth_lista"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="10dp" />
 
 
 </LinearLayout>

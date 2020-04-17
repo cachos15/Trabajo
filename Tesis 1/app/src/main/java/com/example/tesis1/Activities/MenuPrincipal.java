@@ -3,6 +3,7 @@ package com.example.tesis1.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.tesis1.Fragments.share.ShareFragment;
 import com.example.tesis1.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -86,4 +87,5 @@ public class MenuPrincipal extends AppCompatActivity {
         startActivity(i);
         MenuPrincipal.this.finish();
     }
+
 }

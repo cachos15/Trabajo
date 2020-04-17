@@ -12,11 +12,9 @@ import android.provider.Settings;
 import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.RadioButton;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -33,11 +31,9 @@ public class Login extends AppCompatActivity {
     private Button btn_registro, btn_login;
     private EditText ed_txt_usuario, ed_txt_contraseña;
     private ProgressBar pg_login;
-    private Switch s_verContraseña;
-
+    private ImageButton im_verContraseña;
     static String usuario, contraseña, identificacionDispositivo;
-
-    private boolean ejecutar_hilo=true;
+    private boolean ejecutar_hilo=true, verContraseña=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +65,9 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        s_verContraseña.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        im_verContraseña.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onClick(View v) {
                 verContraseña();
             }
         });
@@ -88,7 +84,7 @@ public class Login extends AppCompatActivity {
 
         pg_login            =(ProgressBar)findViewById(R.id.log_progreso);
 
-        s_verContraseña     =(Switch)findViewById(R.id.log_verContraseña);
+        im_verContraseña    =(ImageButton)findViewById(R.id.log_verPass);
 
     }
 
@@ -140,13 +136,17 @@ public class Login extends AppCompatActivity {
 
     private void verContraseña()
     {
-        if(s_verContraseña.isChecked())
+        if (verContraseña)
         {
             ed_txt_contraseña.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+            im_verContraseña.setImageResource(R.drawable.ic_visibility_off);
+            verContraseña=false;
         }
         else
         {
             ed_txt_contraseña.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            im_verContraseña.setImageResource(R.drawable.ic_visibility);
+            verContraseña=true;
         }
     }
 
@@ -154,6 +154,12 @@ public class Login extends AppCompatActivity {
     {
         String DatosPermiso = identificacionDispositivo+","+usuario+"?";
         return DatosPermiso;
+    }
+
+    public String datoUsuario()
+    {
+        String datoUsuario = usuario;
+        return datoUsuario;
     }
 
     private class Hilo_login_ProgressBar extends Thread
@@ -189,9 +195,10 @@ public class Login extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    ejecutar_hilo=true;
                     final Hilo_login_ProgressBar hilo_progressBar = new Hilo_login_ProgressBar();
                     hilo_progressBar.start();
-                    ejecutar_hilo=true;
+                    hilo_progressBar.run();
 
                     Response.Listener<String> respuesta = new Response.Listener<String>() {
                         @Override
